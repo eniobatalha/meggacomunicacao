@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3987",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 3987",
     "lint": "eslint"
   },
   "dependencies": {
+    "lucide-react": "^1.69.0",
     "next": "16.4.5",
+    "qrcode.react": "^4.2.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zustand": "^5.0.16"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

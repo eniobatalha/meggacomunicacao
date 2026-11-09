@@ -1,26 +1,180 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/*
+ * Telas "largas" para layouts lado a lado: desktop/tablet deitado (>= 1024px)
+ * ou celular deitado — onde empilhar deixaria a área útil baixa demais.
+ */
+@custom-variant wide {
+  @media (width >= 64rem), (orientation: landscape) and (width >= 40rem) {
+    @slot;
   }
 }
 
+/* Telas baixas (celular deitado): compacta barras fixas para sobrar área útil */
+@custom-variant short (@media (height < 30rem));
+
+/*
+ * Megga Comunicação — design tokens
+ * Identidade: preto profundo + dourado metálico (símbolo) + prata (logotipo).
+ */
+@theme {
+  --color-ink-950: #070708;
+  --color-ink-900: #0b0b0d;
+  --color-ink-850: #101013;
+  --color-ink-800: #151519;
+  --color-ink-700: #1d1d22;
+  --color-ink-600: #2a2a31;
+  --color-ink-500: #3a3a43;
+
+  --color-bone: #f4f1ea;
+  --color-silver: #c9c7c2;
+  --color-mist: #9b978f;
+  --color-smoke: #6d6a64;
+
+  --color-gold-100: #fbf0d2;
+  --color-gold-200: #f6e2a6;
+  --color-gold-300: #efd085;
+  --color-gold-400: #e3b85a;
+  --color-gold-500: #d4a441;
+  --color-gold-600: #b5852b;
+  --color-gold-700: #8c6420;
+  --color-gold-800: #5e4316;
+
+  --color-success: #5fbf86;
+  --color-danger: #e36b5c;
+  --color-info: #6aa5e0;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-fade-up: fade-up 0.9s var(--ease-out-expo) both;
+  --animate-slow-zoom: slow-zoom 24s ease-out both;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slow-zoom {
+    from { transform: scale(1.12); }
+    to { transform: scale(1); }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
+}
+
+:root {
+  color-scheme: dark;
+  --gold-gradient: linear-gradient(
+    120deg,
+    #f8e3a3 0%,
+    #dcae4a 28%,
+    #a97a22 52%,
+    #e8c46b 76%,
+    #f7dc94 100%
+  );
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink-900);
+  color: var(--color-bone);
+  font-feature-settings: "ss01", "cv11";
+}
+
+::selection {
+  background: var(--color-gold-500);
+  color: var(--color-ink-950);
+}
+
+/* Scrollbar discreta */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-500) transparent;
+}
+
+@utility text-gold {
+  background: var(--gold-gradient);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-gold {
+  background: var(--gold-gradient);
+  background-size: 200% auto;
+}
+
+@utility border-gold {
+  border-image: var(--gold-gradient) 1;
+}
+
+@utility eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-gold-400);
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/* Textura de grão sutil para dar profundidade fotográfica */
+@utility grain {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+}
+
+/* Marca d'água (tarja) das prévias */
+@utility watermark-pattern {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='170' viewBox='0 0 260 170'><g transform='rotate(-28 130 85)' fill='white' font-family='Arial, sans-serif' font-weight='700' letter-spacing='4'><text x='-10' y='70' font-size='22' fill-opacity='0.34'>MEGGA</text><text x='-10' y='92' font-size='9' fill-opacity='0.3' letter-spacing='3'>PRÉVIA PROTEGIDA</text><text x='130' y='150' font-size='22' fill-opacity='0.34'>MEGGA</text><text x='130' y='172' font-size='9' fill-opacity='0.3' letter-spacing='3'>PRÉVIA PROTEGIDA</text></g></svg>");
+  background-size: 260px 170px;
+}
+
+/* Inputs nativos no tema escuro */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(1) saturate(3) hue-rotate(5deg);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
